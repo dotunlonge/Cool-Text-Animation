@@ -3,7 +3,6 @@ let text = element.innerHTML;
 let arrayText = document.querySelector(".animateText").getAttribute("data-textarray");
 if (arrayText != null) {
     arrayText = arrayText.split(",");
-
 }
 let textArray = [];
 let intervalCounter = 0;
@@ -28,7 +27,6 @@ let coreFunction = (arrayOfText) => {
         console.log(textArray)
 
         let forwardInterval = setInterval(() => {
-            forwardInstance++;
 
             if (backward == false) {
                 let currentText = arrayText[textLoopCounter];
@@ -144,7 +142,5 @@ if (!element.getAttribute("data-startDelay")) {
         }, delaytext)
     }
 
-    delay(function() {
-        coreFunction();
-    })
+    delay(coreFunction)
 }
