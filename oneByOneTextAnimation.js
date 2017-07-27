@@ -1,7 +1,10 @@
 let element = document.querySelector(".animateText");
 let text = element.innerHTML;
 let arrayText = document.querySelector(".animateText").getAttribute("data-textarray");
-arrayText = arrayText.split(",");
+if (arrayText != null) {
+    arrayText = arrayText.split(",");
+
+}
 let textArray = [];
 let intervalCounter = 0;
 let speed = element.getAttribute("data-speed");
@@ -9,12 +12,13 @@ let backspeed = speed / 3;
 let backward = false;
 let repeatCounter = 1;
 textLoopCounter = 0;
+let repeatLast = true;
 
 let coreFunction = (arrayOfText) => {
     let coreFunctionArrayLooper = (textLoopCounter) => {
         textArray = [];
         text = arrayText[textLoopCounter];
-        let forwardInstance;
+        let forwardInstance = 0;
         let backwardInstace;
         let repeatCounter = 1;
 
@@ -22,21 +26,25 @@ let coreFunction = (arrayOfText) => {
             textArray[i] = text.substr(i, 1)
         }
         console.log(textArray)
+
         let forwardInterval = setInterval(() => {
+            forwardInstance++;
+
             if (backward == false) {
                 let currentText = arrayText[textLoopCounter];
 
                 if (intervalCounter >= textArray.length) {
                     intervalCounter = 0;
                     backward = true;
-                    forwardInstance = "done";
-                    clearInterval(forwardInterval)
+                    clearInterval(forwardInterval);
+
                 } else {
                     document.querySelector(".animateText").innerHTML += textArray[intervalCounter];
                     intervalCounter++;
 
                 }
             }
+
         }, speed)
 
         let backwardInterval = setInterval(() => {
@@ -45,7 +53,6 @@ let coreFunction = (arrayOfText) => {
 
                 if (currentText <= 0) {
                     backward = false;
-                    backwardInstace = "done";
                     currentText = "";
                     clearInterval(backwardInterval)
                 } else {
@@ -57,6 +64,8 @@ let coreFunction = (arrayOfText) => {
         }, backspeed)
 
     }
+
+
     document.querySelector(".animateText").innerHTML = "";
 
     if (!arrayText) {
@@ -68,15 +77,16 @@ let coreFunction = (arrayOfText) => {
             let currentText = document.querySelector(".animateText").innerHTML;
             if (backward == false) {
                 if (intervalCounter >= textArray.length) {
+
                     intervalCounter = 0;
                     backward = true;
+
                 } else {
                     document.querySelector(".animateText").innerHTML += textArray[intervalCounter];
                     intervalCounter++;
                 }
             }
         }, speed)
-
 
         setInterval(() => {
             let currentText = document.querySelector(".animateText").innerHTML;
@@ -92,7 +102,9 @@ let coreFunction = (arrayOfText) => {
         }, backspeed)
 
     } else {
+
         coreFunctionArrayLooper(textLoopCounter);
+
         setInterval(() => {
             if (repeatCounter == 2) {
                 textLoopCounter++;
@@ -105,26 +117,27 @@ let coreFunction = (arrayOfText) => {
                 repeatCounter = 1;
             }
             repeatCounter++;
-        }, (10 * speed) - backspeed)
+        }, 4.5 * speed)
     }
+
 }
 
 // delay executer
-if (!element.getAttribute("data-delay")) {
+if (!element.getAttribute("data-startDelay")) {
     coreFunction();
 } else {
 
 
     let delay = (fn) => {
         let delaytext
-        let delayElem = element.getAttribute("data-delay");
+        let delayElem = element.getAttribute("data-startDelay");
         delaytext = 0;
 
         for (let i = 0; i < delayElem.length - 1; i++) {
             delaytext += delayElem.substr(i, 1);
         }
 
-        delaytext = delaytext * 1000;
+        delaytext = (delaytext - 1) * 1000;
 
         setTimeout(() => {
             fn();
