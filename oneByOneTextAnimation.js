@@ -1,6 +1,13 @@
 let element = document.querySelector(".animateText");
 let text = element.innerHTML;
-let arrayText = document.querySelector(".animateText").getAttribute("data-textarray");
+let arrayText = element.getAttribute("data-textarray");
+
+let delayTime = element.getAttribute("data-textPauseFor");
+
+if (delayTime == 0 || null || undefined) {
+    delayTime = 0;
+}
+
 if (arrayText != null) {
     arrayText = arrayText.split(",");
 }
@@ -9,11 +16,14 @@ let intervalCounter = 0;
 let speed = element.getAttribute("data-speed");
 let backspeed = speed / 3;
 let backward = false;
+
+let backwardDelay = 1;
 let repeatCounter = 1;
 textLoopCounter = 0;
 let repeatLast = true;
 
 let coreFunction = (arrayOfText) => {
+
     let coreFunctionArrayLooper = (textLoopCounter) => {
         textArray = [];
         text = arrayText[textLoopCounter];
@@ -24,7 +34,6 @@ let coreFunction = (arrayOfText) => {
         for (let i = 0; i < text.length; i++) {
             textArray[i] = text.substr(i, 1)
         }
-        console.log(textArray)
 
         let forwardInterval = setInterval(() => {
 
@@ -33,34 +42,43 @@ let coreFunction = (arrayOfText) => {
 
                 if (intervalCounter >= textArray.length) {
                     intervalCounter = 0;
+
                     backward = true;
+
+
                     clearInterval(forwardInterval);
 
                 } else {
                     document.querySelector(".animateText").innerHTML += textArray[intervalCounter];
                     intervalCounter++;
-
                 }
             }
 
         }, speed)
 
         let backwardInterval = setInterval(() => {
-            if (backward == true) {
-                let currentText = document.querySelector(".animateText").innerHTML;
+                if (backward == true) {
+                    if (backwardDelay > delayTime) {
+                        let currentText = document.querySelector(".animateText").innerHTML;
+                        if (currentText <= 0) {
+                            backward = false;
+                            currentText = "";
 
-                if (currentText <= 0) {
-                    backward = false;
-                    currentText = "";
-                    clearInterval(backwardInterval)
-                } else {
-                    currentText = currentText.substr(0, text.length - intervalCounter)
-                    document.querySelector(".animateText").innerHTML = currentText;
-                    intervalCounter++;
+                            console.log(backward);
+
+                            clearInterval(backwardInterval)
+                        } else {
+                            currentText = currentText.substr(0, text.length - intervalCounter)
+                            document.querySelector(".animateText").innerHTML = currentText;
+                            intervalCounter++;
+                        }
+                    } else {
+                        backwardDelay++;
+                        console.log(backwardDelay)
+                    }
                 }
-            }
-        }, backspeed)
-
+            },
+            backspeed)
     }
 
 
@@ -75,10 +93,8 @@ let coreFunction = (arrayOfText) => {
             let currentText = document.querySelector(".animateText").innerHTML;
             if (backward == false) {
                 if (intervalCounter >= textArray.length) {
-
                     intervalCounter = 0;
                     backward = true;
-
                 } else {
                     document.querySelector(".animateText").innerHTML += textArray[intervalCounter];
                     intervalCounter++;
@@ -104,20 +120,24 @@ let coreFunction = (arrayOfText) => {
         coreFunctionArrayLooper(textLoopCounter);
 
         setInterval(() => {
-            if (repeatCounter == 2) {
-                textLoopCounter++;
-                if (textLoopCounter == arrayText.length) {
-                    textLoopCounter = 0;
+            if (backward == false) {
+                console.log("he")
+                backwardDelay = 0;
+                if (repeatCounter == 2) {
+                    textLoopCounter++;
+                    if (textLoopCounter == arrayText.length) {
+                        textLoopCounter = 0;
+                    }
                 }
-            }
-            coreFunctionArrayLooper(textLoopCounter);
-            if (repeatCounter == 3) {
-                repeatCounter = 1;
-            }
-            repeatCounter++;
-        }, 4.5 * speed)
-    }
 
+                coreFunctionArrayLooper(textLoopCounter);
+                if (repeatCounter == 3) {
+                    repeatCounter = 1;
+                }
+                repeatCounter++;
+            }
+        }, 5 * speed)
+    }
 }
 
 // delay executer
@@ -126,7 +146,7 @@ if (!element.getAttribute("data-startDelay")) {
 } else {
 
 
-    let delay = (fn) => {
+    let delayFunction = (fn) => {
         let delaytext
         let delayElem = element.getAttribute("data-startDelay");
         delaytext = 0;
@@ -142,5 +162,5 @@ if (!element.getAttribute("data-startDelay")) {
         }, delaytext)
     }
 
-    delay(coreFunction)
+    delayFunction(coreFunction)
 }
